@@ -5,8 +5,7 @@
 </p>
 
 <h1 align="center">
-  <img src="assets/logo.png" alt="AutoSAST Logo" width="48" style="vertical-align: middle; margin-right: 10px;">
-  AutoSAST
+  <img src="assets/logo.png" alt="AutoSAST Logo" height="50" align="center"> AutoSAST
 </h1>
 
 <p align="center">
