@@ -94,47 +94,67 @@ def setup_logging(level: str = "INFO", log_file: Optional[str] = None, quiet: bo
 def print_banner():
     """Print the AutoSAST banner using Rich."""
     banner_text = Text()
-    banner_text.append("🛡️  ", style="bold cyan")
-    banner_text.append("AutoSAST", style="bold white")
-    banner_text.append(" - False Positive Reduction Engine\n", style="bold cyan")
-    banner_text.append("    Powered by LLM-based Contextual Analysis", style="dim white")
+    banner_text.append("\n  🛡️  ", style="bold bright_cyan")
+    banner_text.append("AutoSAST", style="bold bright_white")
+    banner_text.append(" - AI-Powered Security Triage", style="bold bright_cyan")
+    banner_text.append("\n      ", style="")
+    banner_text.append("Intelligent False Positive Reduction", style="italic bright_blue")
+    banner_text.append("\n", style="")
 
     console.print()
     console.print(Panel(
         banner_text,
         box=DOUBLE,
-        border_style="cyan",
-        padding=(1, 2),
+        border_style="bright_cyan",
+        padding=(0, 2),
     ))
     console.print()
 
 
 def print_config_panel(target: Path, args, config):
     """Print configuration panel showing all active settings."""
-    # Build configuration table
+    # Build configuration table with better styling
     config_table = Table(show_header=False, box=None, padding=(0, 2))
-    config_table.add_column("Setting", style="cyan")
-    config_table.add_column("Value", style="white")
+    config_table.add_column("Setting", style="bold bright_cyan", width=22)
+    config_table.add_column("Value", style="bright_white")
 
-    config_table.add_row("📁 Target", str(target))
-    config_table.add_row("📋 Semgrep Config", args.config)
+    # Target info
+    target_display = str(target)
+    if len(target_display) > 60:
+        target_display = "..." + target_display[-57:]
+    config_table.add_row("📁 Target", f"[bright_white]{target_display}[/]")
+
+    # Semgrep config
+    config_table.add_row("📋 Semgrep Config", f"[bright_yellow]{args.config}[/]")
+
     if hasattr(args, 'rules') and args.rules:
-        config_table.add_row("📜 Custom Rules", args.rules)
-    config_table.add_row("🤖 LLM Provider", f"{config.provider} / {config.model}")
+        config_table.add_row("📜 Custom Rules", f"[bright_magenta]{args.rules}[/]")
 
+    # LLM Provider with better formatting
+    provider_display = f"[bright_green]{config.provider.upper()}[/] [dim]→[/] [bright_blue]{config.model}[/]"
+    config_table.add_row("🤖 LLM Provider", provider_display)
+
+    # Limits and filters
     if hasattr(args, 'limit') and args.limit:
-        config_table.add_row("🔢 Finding Limit", str(args.limit))
-    
+        config_table.add_row("🔢 Finding Limit", f"[bright_yellow]{args.limit}[/]")
+
     if hasattr(args, 'severity') and args.severity:
         severity_str = ", ".join(s.upper() for s in args.severity)
-        config_table.add_row("⚡ Severity Filter", f"[yellow]{severity_str}[/]")
+        config_table.add_row("⚡ Severity Filter", f"[bold bright_red]{severity_str}[/]")
 
+    # Features
     enable_tools = not getattr(args, 'no_tools', False)
     enable_iterative = not getattr(args, 'no_iterative', False)
     max_iterations = getattr(args, 'max_context_iterations', 3)
 
-    config_table.add_row("🔧 Tool Calling", "[green]Enabled[/]" if enable_tools else "[red]Disabled[/]")
-    config_table.add_row("🔄 Iterative Context", f"[green]Enabled[/] (max {max_iterations})" if enable_iterative else "[red]Disabled[/]")
+    tools_status = "[bold bright_green]✓ Enabled[/]" if enable_tools else "[bold bright_red]✗ Disabled[/]"
+    config_table.add_row("� Tool Calling", tools_status)
+
+    if enable_iterative:
+        iterative_status = f"[bold bright_green]✓ Enabled[/] [dim](max {max_iterations} iterations)[/]"
+    else:
+        iterative_status = "[bold bright_red]✗ Disabled[/]"
+    config_table.add_row("🔄 Iterative Context", iterative_status)
 
     # Show output path (either custom or auto-generated)
     if args.output:
@@ -161,110 +181,169 @@ def print_summary(result: PipelineResult):
 
     console.print()
 
-    # Results summary table
+    # Results summary table with enhanced styling
     summary_table = Table(show_header=False, box=None, padding=(0, 2))
-    summary_table.add_column("Category", style="bold")
-    summary_table.add_column("Count", justify="right", style="bold")
-    summary_table.add_column("Visual", width=20)
+    summary_table.add_column("Category", style="bold bright_white", width=20)
+    summary_table.add_column("Count", justify="right", style="bold", width=8)
+    summary_table.add_column("Visual", width=25)
 
-    # Calculate bar widths
+    # Calculate bar widths for visualization
     total = max(s.total_findings, 1)
-    tp_width = int(20 * s.true_positives / total)
-    fp_width = int(20 * s.false_positives / total)
-    review_width = int(20 * s.needs_review / total)
+    bar_length = 20
+    tp_width = int(bar_length * s.true_positives / total)
+    fp_width = int(bar_length * s.false_positives / total)
+    review_width = int(bar_length * s.needs_review / total)
 
+    # True Positives - Vulnerabilities found
     summary_table.add_row(
-        "[red]🔴 True Positives[/]",
-        f"[red]{s.true_positives}[/]",
-        f"[red]{'█' * tp_width}{'░' * (20 - tp_width)}[/]"
+        "[bold bright_red]🔴 Vulnerable[/]",
+        f"[bold bright_red]{s.true_positives}[/]",
+        f"[bright_red]{'█' * tp_width}[/][dim]{'░' * (bar_length - tp_width)}[/]"
     )
+
+    # False Positives - Safe findings
     summary_table.add_row(
-        "[green]🟢 False Positives[/]",
-        f"[green]{s.false_positives}[/]",
-        f"[green]{'█' * fp_width}{'░' * (20 - fp_width)}[/]"
+        "[bold bright_green]✅ Safe[/]",
+        f"[bold bright_green]{s.false_positives}[/]",
+        f"[bright_green]{'█' * fp_width}[/][dim]{'░' * (bar_length - fp_width)}[/]"
     )
+
+    # Needs Review
     summary_table.add_row(
-        "[yellow]🟡 Needs Review[/]",
-        f"[yellow]{s.needs_review}[/]",
-        f"[yellow]{'█' * review_width}{'░' * (20 - review_width)}[/]"
+        "[bold bright_yellow]⚠️  Needs Review[/]",
+        f"[bold bright_yellow]{s.needs_review}[/]",
+        f"[bright_yellow]{'█' * review_width}[/][dim]{'░' * (bar_length - review_width)}[/]"
     )
+
+    # Errors (if any)
     if s.analysis_errors > 0:
         summary_table.add_row(
-            "[dim]⚪ Errors[/]",
+            "[dim]❌ Errors[/]",
             f"[dim]{s.analysis_errors}[/]",
             ""
         )
 
+    # Determine panel color based on results
+    if s.true_positives > 0:
+        panel_color = "bright_red"
+        panel_title = f"[bold bright_white]🎯 Analysis Complete[/] [bright_red]● {s.true_positives} Vulnerable[/]"
+    elif s.needs_review > 0:
+        panel_color = "bright_yellow"
+        panel_title = f"[bold bright_white]🎯 Analysis Complete[/] [bright_yellow]● {s.needs_review} To Review[/]"
+    else:
+        panel_color = "bright_green"
+        panel_title = f"[bold bright_white]🎯 Analysis Complete[/] [bright_green]● All Safe[/]"
+
     console.print(Panel(
         summary_table,
-        title=f"[bold white]📊 Analysis Results ({s.total_findings} findings)[/]",
-        border_style="green",
+        title=panel_title,
+        subtitle=f"[dim]Total: {s.total_findings} findings analyzed[/]",
+        border_style=panel_color,
         box=ROUNDED,
     ))
 
-    # Metrics table
+    # Enhanced metrics table
     metrics_table = Table(show_header=False, box=None, padding=(0, 2))
-    metrics_table.add_column("Metric", style="cyan")
-    metrics_table.add_column("Value", justify="right", style="bold white")
+    metrics_table.add_column("Metric", style="bold bright_cyan", width=22)
+    metrics_table.add_column("Value", justify="right", style="bold bright_white")
 
-    # Reduction percentage with color coding
-    reduction_style = "green" if s.reduction_percentage >= 30 else "yellow" if s.reduction_percentage >= 10 else "red"
+    # False Positive Reduction Rate with enhanced color coding
+    reduction_style = "bold bright_green" if s.reduction_percentage >= 50 else "bold bright_yellow" if s.reduction_percentage >= 30 else "bold bright_red"
+    reduction_icon = "🎯" if s.reduction_percentage >= 50 else "📊" if s.reduction_percentage >= 30 else "⚠️"
+    metrics_table.add_row(
+        f"{reduction_icon} FP Reduction Rate",
+        f"[{reduction_style}]{s.reduction_percentage:.1f}%[/{reduction_style}]"
+    )
 
-    metrics_table.add_row("FP Reduction Rate", f"[{reduction_style}]{s.reduction_percentage:.1f}%[/]")
-    metrics_table.add_row("Tokens Used", f"{s.total_tokens_used:,}")
-    metrics_table.add_row("Tool Calls Made", str(s.total_tool_calls))
-    metrics_table.add_row("Scan Time", f"{s.scan_time_seconds:.1f}s")
-    metrics_table.add_row("Analysis Time", f"{s.analysis_time_seconds:.1f}s")
+    # Performance metrics with icons
+    total_time = s.scan_time_seconds + s.analysis_time_seconds
+    metrics_table.add_row("⚡ Total Time", f"[bright_blue]{total_time:.1f}s[/]")
+    metrics_table.add_row("  ├─ Semgrep Scan", f"[dim]{s.scan_time_seconds:.1f}s[/]")
+    metrics_table.add_row("  └─ AI Analysis", f"[dim]{s.analysis_time_seconds:.1f}s[/]")
 
+    # Resource usage
+    metrics_table.add_row("🎫 Tokens Used", f"[bright_magenta]{s.total_tokens_used:,}[/]")
+    metrics_table.add_row("🔧 Tool Calls", f"[bright_blue]{s.total_tool_calls}[/]")
+
+    # Context expansion stats (if applicable)
     if s.findings_with_context_expansion > 0:
-        metrics_table.add_row("Context Expansions", str(s.findings_with_context_expansion))
-        metrics_table.add_row("Total Iterations", str(s.total_context_iterations))
+        metrics_table.add_row("🔄 Context Expansions", f"[bright_yellow]{s.findings_with_context_expansion}[/]")
+        metrics_table.add_row("  └─ Total Iterations", f"[dim]{s.total_context_iterations}[/]")
 
+    console.print()
     console.print(Panel(
         metrics_table,
-        title="[bold white]📈 Metrics[/]",
-        border_style="cyan",
+        title="[bold bright_white]� Performance Metrics[/]",
+        border_style="bright_cyan",
         box=ROUNDED,
     ))
 
 
 def print_finding_result(finding_num: int, total: int, rule_id: str, file_path: str,
                          line: int, verdict: str, confidence: float, tool_calls: int = 0):
-    """Print a single finding analysis result."""
-    # Verdict styling
+    """Print a single finding analysis result with enhanced styling."""
+    # Improved verdict styling with better colors
     verdict_styles = {
-        "TRUE_POSITIVE": ("🔴", "red", "Vulnerable"),
-        "FALSE_POSITIVE": ("🟢", "green", "Safe"),
-        "NEEDS_REVIEW": ("🟡", "yellow", "Review"),
-        "NEEDS_MORE_CONTEXT": ("🟠", "orange3", "More Context"),
-        "INSUFFICIENT_CONTEXT": ("⚪", "dim", "No Context"),
-        "ERROR": ("❌", "red", "Error"),
+        "TRUE_POSITIVE": ("🔴", "bold bright_red", "VULNERABLE", "red"),
+        "FALSE_POSITIVE": ("✅", "bold bright_green", "SAFE", "green"),
+        "NEEDS_REVIEW": ("⚠️", "bold bright_yellow", "NEEDS REVIEW", "yellow"),
+        "NEEDS_MORE_CONTEXT": ("�", "bold bright_magenta", "MORE CONTEXT", "magenta"),
+        "INSUFFICIENT_CONTEXT": ("❓", "dim", "NO CONTEXT", "dim"),
+        "ERROR": ("❌", "bold bright_red", "ERROR", "red"),
     }
 
-    icon, style, label = verdict_styles.get(verdict, ("❓", "white", verdict))
+    icon, style, label, box_color = verdict_styles.get(verdict, ("❓", "white", verdict, "white"))
 
     # Truncate file path if too long
-    max_path_len = 40
+    max_path_len = 50
     display_path = file_path
     if len(file_path) > max_path_len:
         display_path = "..." + file_path[-(max_path_len-3):]
 
     # Truncate rule_id if too long
-    max_rule_len = 35
+    max_rule_len = 40
     display_rule = rule_id
     if len(rule_id) > max_rule_len:
         display_rule = rule_id[:max_rule_len-3] + "..."
 
-    # Build output
-    progress_text = f"[dim][{finding_num}/{total}][/]"
-    verdict_text = f"[{style}]{icon} {label}[/]"
-    confidence_text = f"[dim]({confidence:.0%})[/]" if confidence else ""
-    tool_text = f"[dim]🔧×{tool_calls}[/]" if tool_calls > 0 else ""
+    # Build enhanced output with better formatting
+    progress_text = f"[bold bright_cyan]#{finding_num}[/][dim]/{total}[/]"
+    verdict_text = f"{icon} [{style}]{label}[/{style}]"
 
-    console.print(f"  {progress_text} {verdict_text} {confidence_text} {tool_text}")
-    console.print(f"      [cyan]{display_rule}[/]")
-    console.print(f"      [dim]{display_path}:{line}[/]")
+    # Confidence bar visualization
+    if confidence:
+        conf_percent = int(confidence * 100)
+        if conf_percent >= 80:
+            conf_color = "bright_green"
+        elif conf_percent >= 60:
+            conf_color = "bright_yellow"
+        else:
+            conf_color = "bright_red"
+        confidence_text = f"[{conf_color}]{conf_percent}%[/{conf_color}]"
+    else:
+        confidence_text = ""
+
+    # Tool calls indicator
+    if tool_calls > 0:
+        tool_text = f"[bright_blue]🔧 {tool_calls} tools[/]"
+    else:
+        tool_text = ""
+
+    # Create a mini panel for each finding
+    finding_info = f"{progress_text}  {verdict_text}"
+    if confidence_text:
+        finding_info += f"  {confidence_text}"
+    if tool_text:
+        finding_info += f"  {tool_text}"
+
     console.print()
+    console.print(Panel(
+        f"{finding_info}\n[bright_cyan]📋 {display_rule}[/]\n[dim]📄 {display_path}:{line}[/]",
+        border_style=box_color,
+        padding=(0, 1),
+        box=ROUNDED,
+    ))
+
 
 
 def cmd_scan(args):
@@ -344,11 +423,12 @@ def cmd_scan(args):
                 tool_calls=result.get('tool_calls', 0),
             )
 
-        # Stage 1: Semgrep Scan
+        # Stage 1: Semgrep Scan - Enhanced panel
+        console.print()
         console.print(Panel(
-            "[bold]Stage 1/3:[/] Running Semgrep static analysis...",
-            title="[bold cyan]🔍 Scanning[/]",
-            border_style="cyan",
+            "[bold bright_white]Stage 1/3:[/] Running Semgrep static analysis\n[dim]Analyzing code patterns and security rules...[/]",
+            title="[bold bright_cyan]🔍 Code Scanning[/]",
+            border_style="bright_cyan",
             box=ROUNDED,
         ))
 
@@ -408,32 +488,37 @@ def cmd_scan(args):
             ]
             scan_results.findings = filtered_findings
     
-        # Show scan results
+        # Show scan results with enhanced formatting
         findings_count = scan_results.finding_count
+        console.print()
         if severity_filter and original_count != findings_count:
-            console.print(f"  [green]✓[/] Found [bold]{original_count}[/] findings, [yellow]{findings_count}[/] match severity filter in {scan_time:.1f}s")
+            console.print(f"  [bold bright_green]✓[/] Found [bold bright_yellow]{original_count}[/] findings → [bold bright_cyan]{findings_count}[/] match filter [dim]({scan_time:.1f}s)[/]")
         elif max_findings and max_findings < findings_count:
-            console.print(f"  [green]✓[/] Found [bold]{findings_count}[/] findings (analyzing first {max_findings})")
+            console.print(f"  [bold bright_green]✓[/] Found [bold bright_cyan]{findings_count}[/] findings [dim](analyzing first {max_findings})[/]")
         else:
-            console.print(f"  [green]✓[/] Found [bold]{findings_count}[/] findings in {scan_time:.1f}s")
+            console.print(f"  [bold bright_green]✓[/] Found [bold bright_cyan]{findings_count}[/] findings [dim]in {scan_time:.1f}s[/]")
         console.print()
 
         if findings_count == 0:
             console.print(Panel(
-                "[green]No security findings detected![/]",
-                title="[bold green]✅ Clean[/]",
-                border_style="green",
+                "[bold bright_green]✨ No security findings detected!\n[/][dim]Your code passed all security checks.[/]",
+                title="[bold bright_green]✅ Clean Scan[/]",
+                border_style="bright_green",
+                box=ROUNDED,
             ))
-            console.print("\n[yellow]ℹ️  No report generated - 0 findings detected[/]")
-            console.print("[dim]   (Reports are only created when vulnerabilities are found)[/]")
+            console.print("\n[bright_yellow]ℹ️  No report generated[/] [dim]- Zero findings detected[/]")
+            console.print("[dim]   Reports are only created when potential vulnerabilities are found[/]")
             return
 
-        # Stage 2: Context Extraction & Analysis
+        # Stage 2: Context Extraction & Analysis - Enhanced panel
+        console.print()
         console.print(Panel(
-            f"[bold]Stage 2/3:[/] Extracting code context and analyzing with LLM...\n"
-            f"[dim]Using {config.model} for vulnerability analysis[/]",
-            title="[bold cyan]🧠 Analyzing[/]",
-            border_style="cyan",
+            f"[bold bright_white]Stage 2/3:[/] AI-powered vulnerability analysis\n"
+            f"[dim]• Extracting code context and data flows\n"
+            f"• Analyzing with [bright_blue]{config.model}[/]\n"
+            f"• Checking sanitization patterns[/]",
+            title="[bold bright_magenta]🧠 AI Analysis[/]",
+            border_style="bright_magenta",
             box=ROUNDED,
         ))
         console.print()
