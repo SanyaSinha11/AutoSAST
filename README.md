@@ -17,6 +17,11 @@
   <em>AI-Powered Static Analysis Triage that thinks like a security engineer.</em>
 </p>
 
+<p align="center">
+  <a href="USER_GUIDE.md">📚 Complete User Guide</a> •
+  <a href="GIT_REPOSITORY_SUPPORT.md">🔗 Git Repository Guide</a>
+</p>
+
 ---
 
 ## The Problem
@@ -119,49 +124,18 @@ The agent **iteratively investigates** each finding:
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-### 🛡️ Inter-Procedural Data Flow Analysis
-Traces tainted variables **across functions and files**. Because sanitization often happens in a utility class, not at the sink.
+- 🛡️ **Inter-Procedural Data Flow** - Traces tainted data across functions and files
+- 🔍 **Dynamic Context Retrieval** - LLM reads code on demand (callers, callees, definitions)
+- 🧹 **Sanitization Detection** - Recognizes 60+ patterns (SQL, XSS, Path Traversal, etc.)
+- 🌐 **Multi-Language** - Java, Python, JavaScript/TypeScript
+- 🧠 **Agentic Reasoning** - Iteratively gathers evidence with 11 specialized tools
+- 🤖 **Multi-LLM** - OpenAI, Gemini, Groq, **Ollama (100% local & free)**, Azure
+- 🔗 **Git Repository Support** - Scan GitHub/GitLab repos directly (auto-clone & cleanup)
+- 📊 **60%+ False Positive Reduction** - Focus on what actually matters
 
-### 🔍 Dynamic Context Retrieval  
-The LLM **reads your codebase on demand**—callers, callees, definitions, references. It sees what it needs, exactly when it needs it.
-
-### 🧹 Sanitization Detection
-Recognizes **60+ sanitization patterns** across categories:
-- SQL: `PreparedStatement`, `setString()`, parameterized queries, ORM patterns
-- XSS: OWASP Encoder, `escapeHtml`, `StringEscapeUtils`
-- Path Traversal: `normalize()`, `getCanonicalPath()`
-- Command Injection: `ProcessBuilder` arrays, allowlists
-- And many more...
-
-### 🌐 Multi-Language Support
-Full analysis support for:
-- **Java** — Servlets, Spring, JDBC, Hibernate
-- **Python** — Flask, Django, SQLAlchemy
-- **JavaScript/TypeScript** — Express, Node.js, React
-
-### 🧠 Agentic Reasoning
-Not a simple classifier. An **actual agent** that:
-- Uses tools iteratively to gather evidence
-- Follows caller chains to entry points
-- Understands framework conventions
-- Provides detailed reasoning for each verdict
-
-### 🤖 Multi-LLM Support
-Works with **any LLM provider** - choose based on your needs:
-- **OpenAI** (GPT-4o) - Most tested, highest accuracy
-- **Google Gemini** - Fast and cost-effective
-- **Groq** - Ultra-fast inference for open models
-- **Ollama** - **100% local, free, private** - no API costs!
-- **Azure OpenAI** - Enterprise compliance and data privacy
-
-### 🔗 Git Repository Support (NEW!)
-Scan **any public Git repository** directly:
-- **Auto-clone** from GitHub, GitLab, Bitbucket, or self-hosted Git
-- **Automatic cleanup** - temporary files deleted after scan
-- **Branch/tag/commit support** - scan any version
-- No manual cloning needed!
+> **📚 [Read the Complete User Guide](USER_GUIDE.md)** for detailed usage scenarios, best practices, and troubleshooting.
 
 ---
 
@@ -173,31 +147,16 @@ python -m src.cli scan /path/to/project
 python -m src.cli scan . --config auto --limit 10
 ```
 
-### Scan Git Repository 
-AutoSAST can now scan remote repositories directly - no manual cloning needed!
-
+### Scan Git Repository
 ```bash
-# GitHub
+# Scan any public Git repository directly
 python -m src.cli scan https://github.com/user/repository
-
-# Specific branch
 python -m src.cli scan https://github.com/user/repo --branch develop
-
-# Specific tag or commit
-python -m src.cli scan https://github.com/user/repo --tag v1.0.0
-python -m src.cli scan https://github.com/user/repo --commit abc123
-
-# GitLab / Bitbucket / Self-hosted
-python -m src.cli scan https://gitlab.com/user/project
-python -m src.cli scan https://bitbucket.org/user/repo
+python -m src.cli scan https://gitlab.com/user/project --tag v1.0.0
 ```
 
-**Features:**
-- ✅ Automatically clones to temporary directory
-- ✅ Runs full security analysis
-- ✅ Deletes temporary files after scan completes
-- ✅ Works with GitHub, GitLab, Bitbucket, and any Git hosting
-- ⚠️ Public repositories only (private repos require manual clone)
+Auto-clones, scans, and cleans up automatically. Works with GitHub, GitLab, Bitbucket, and any Git hosting.
+**📖 [Git Repository Guide](GIT_REPOSITORY_SUPPORT.md)** for advanced options and private repo workarounds.
 
 ### Other Commands
 ```bash
@@ -237,60 +196,39 @@ Configure via environment variables or `.env` file:
 | `GROQ_API_KEY` | API key for Groq (required if PROVIDER=groq) | — |
 | `OLLAMA_BASE_URL` | Ollama server URL (optional if PROVIDER=ollama) | `http://localhost:11434` |
 
-### 💡 LLM Provider Options
+### 💡 Supported LLM Providers
 
-**Commercial (Cloud-based):**
-- **OpenAI** - GPT-4o, GPT-4 (most tested, recommended)
-- **Azure OpenAI** - Enterprise OpenAI deployment
-- **Google Gemini** - Gemini 1.5 Pro, Gemini Pro
-- **Groq** - Fast inference for open models (Mixtral, Llama)
+- **OpenAI** (GPT-4o) - Most tested ⭐
+- **Google Gemini** - Fast and cost-effective
+- **Groq** - Ultra-fast inference
+- **Ollama** - 100% local and free (recommended: `qwen2.5:14b`)
+- **Azure OpenAI** - Enterprise compliance
 
-**Local (Free & Private):**
-- **Ollama** - Run models locally (no API costs, full privacy)
-  - Install: https://ollama.ai
-  - Recommended models: `qwen2.5:14b`, `llama3.1:8b`, `codellama:13b`
-  - Usage: `export PROVIDER=ollama && export MODEL=qwen2.5:14b`
-
----
-
-## 🧰 Agent Tools
-
-AutoSAST's LLM agent has access to powerful code analysis tools:
-
-| Tool | Purpose |
-|------|---------|
-| `get_function_code` | Retrieve full source of any function/method |
-| `get_caller_chain` | Trace backwards to find all callers up to entry points |
-| `analyze_data_flow` | Inter-procedural taint tracking from source to sink |
-| `get_sanitization_check` | Detect sanitization applied to a variable |
-| `search_codebase` | Find patterns, security utilities, or similar code |
-| `get_imports` | Understand available libraries and frameworks |
-| `map_arguments` | Track data flow between caller and callee |
+**📚 [Configuration Guide](USER_GUIDE.md#configuration)** for detailed setup instructions.
 
 ---
 
 ## 🚀 Why AutoSAST?
 
 | Without AutoSAST | With AutoSAST |
-|-------------|-----------|
-| Hours of manual triage | Seconds of automated analysis |
-| Alert fatigue → missed vulns | Focus on what matters |
-| "I'll check it later" → never | Immediate, confident verdicts |
-| Tribal knowledge required | Reasoning is documented |
+|------------------|---------------|
+| ⏰ Hours of manual triage | ⚡ Seconds of automated analysis |
+| 😵 Alert fatigue → missed vulnerabilities | 🎯 Focus on what matters |
+| 📝 "I'll check it later" → never | ✅ Immediate, confident verdicts |
+| 🧠 Tribal knowledge required | 📖 AI reasoning is documented |
 
 ---
 
-## 📜 License
+## 📚 Documentation
 
-MIT License — See [LICENSE](LICENSE) for details.
+- **[Complete User Guide](USER_GUIDE.md)** - Installation, configuration, usage scenarios, best practices
+- **[Git Repository Support](GIT_REPOSITORY_SUPPORT.md)** - Scan remote repositories, advanced options
+- **[Agent Tools Reference](USER_GUIDE.md#advanced-features)** - 11 specialized code analysis tools
 
 ---
 
 <p align="center">
-  <strong>Stop wasting time on false positives.</strong><br>
-  <em>Let AutoSAST do the triage. You focus on fixing real vulnerabilities.</em>
-</p>
-
-<p align="center">
-  <a href="#-quick-start">Get Started →</a>
+  <strong>Ready to reduce false positives by 60%+?</strong><br>
+  <a href="#-quick-start">Get Started →</a> |
+  <a href="USER_GUIDE.md">📚 Read the Guide</a>
 </p>
