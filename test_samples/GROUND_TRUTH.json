@@ -1,0 +1,500 @@
+{
+  "description": "Comprehensive ground truth for AutoSAST validation - no hints in code",
+  "created": "2026-01-08",
+  "statistics": {
+    "total_cases": 58,
+    "true_positives": 33,
+    "false_positives": 53
+  },
+  "java": {
+    "description": "Ground truth aligned with Semgrep p/java findings",
+    "total": 33,
+    "tp": 29,
+    "fp": 4,
+    "cases": [
+      {
+        "file": "AccountHandler.java",
+        "line": 32,
+        "method": "handleLookup",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "AdminController.java",
+        "line": 30,
+        "method": "doGet",
+        "rule": "no-direct-response-writer",
+        "expected": "TP",
+        "category": "xss",
+        "notes": "Outputs audit logs which may contain user-controlled data - stored XSS risk"
+      },
+      {
+        "file": "SecureReportHandler.java",
+        "line": 37,
+        "method": "generateSummary",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli"
+      },
+      {
+        "file": "SecureReportHandler.java",
+        "line": 54,
+        "method": "generateDetailed",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli"
+      },
+      {
+        "file": "HashUtil.java",
+        "line": 14,
+        "method": "hashLegacy",
+        "rule": "use-of-md5",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "TokenGenerator.java",
+        "line": 23,
+        "method": "generate",
+        "rule": "cbc-padding-oracle",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "TokenGenerator.java",
+        "line": 30,
+        "method": "generate",
+        "rule": "cbc-padding-oracle",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "AuditRepository.java",
+        "line": 23,
+        "method": "recordAccess",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "AuditRepository.java",
+        "line": 33,
+        "method": "getLogsByUser",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "OrderDAO.java",
+        "line": 16,
+        "method": "findById",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "OrderDAO.java",
+        "line": 26,
+        "method": "deleteById",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "OrderRepository.java",
+        "line": 22,
+        "method": "findOrderById",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "ProductRepository.java",
+        "line": 22,
+        "method": "findProductById",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "ProductRepository.java",
+        "line": 36,
+        "method": "getProductReviews",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "RecordFetcher.java",
+        "line": 20,
+        "method": "fetch",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "RecordFetcher.java",
+        "line": 58,
+        "method": "fetchAllowed",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli"
+      },
+      {
+        "file": "EmployeeController.java",
+        "line": 47,
+        "method": "doGet",
+        "rule": "no-direct-response-writer",
+        "expected": "TP",
+        "category": "xss",
+        "notes": "getEmployeeDetails result not escaped, potential stored XSS"
+      },
+      {
+        "file": "NetworkController.java",
+        "line": 33,
+        "method": "doGet",
+        "rule": "no-direct-response-writer",
+        "expected": "FP",
+        "category": "xss"
+      },
+      {
+        "file": "UserController.java",
+        "line": 20,
+        "method": "getUserProfile",
+        "rule": "tainted-sql-from-http-request",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "UserController.java",
+        "line": 27,
+        "method": "searchUsers",
+        "rule": "tainted-sql-from-http-request",
+        "expected": "TP",
+        "category": "sqli",
+        "notes": "Blocklist sanitization is bypassable, string concat is still used"
+      },
+      {
+        "file": "FileController.java",
+        "line": 18,
+        "method": "downloadFile",
+        "rule": "httpservlet-path-traversal",
+        "expected": "TP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "FileController.java",
+        "line": 24,
+        "method": "downloadFile",
+        "rule": "httpservlet-path-traversal",
+        "expected": "TP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "FileController.java",
+        "line": 29,
+        "method": "downloadFile",
+        "rule": "no-direct-response-writer",
+        "expected": "TP",
+        "category": "xss"
+      },
+      {
+        "file": "UserController.java",
+        "line": 28,
+        "method": "searchUsers",
+        "rule": "tainted-sql-from-http-request",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "UserController.java",
+        "line": 38,
+        "method": "displayUserProfile",
+        "rule": "no-direct-response-writer",
+        "expected": "TP",
+        "category": "xss"
+      },
+      {
+        "file": "UserController.java",
+        "line": 45,
+        "method": "runSystemCommand",
+        "rule": "tainted-cmd-from-http-request",
+        "expected": "TP",
+        "category": "cmdi"
+      },
+      {
+        "file": "OrderController.java",
+        "line": 24,
+        "method": "doGet",
+        "rule": "no-direct-response-writer",
+        "expected": "FP",
+        "category": "xss"
+      },
+      {
+        "file": "ProductController.java",
+        "line": 21,
+        "method": "doGet",
+        "rule": "no-direct-response-writer",
+        "expected": "TP",
+        "category": "xss"
+      },
+      {
+        "file": "OrderRepository.java",
+        "line": 17,
+        "method": "findByIdAndCustomer",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli",
+        "notes": "String concatenation for SQL - no PreparedStatement"
+      },
+      {
+        "file": "ProductRepository.java",
+        "line": 18,
+        "method": "findBySearchTermAndCategory",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "CryptoService.java",
+        "line": 14,
+        "method": "hashPassword",
+        "rule": "use-of-md5",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "CryptoService.java",
+        "line": 22,
+        "method": "encryptData",
+        "rule": "ecb-cipher",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "CryptoService.java",
+        "line": 22,
+        "method": "encryptData",
+        "rule": "des-is-deprecated",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "UserProfileService.java",
+        "line": 26,
+        "method": "fetchProfile",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli-advanced",
+        "notes": "Input sanitized by InputValidator.sanitizeNumericInput() which strips non-numeric chars"
+      },
+      {
+        "file": "OrderLookupController.java",
+        "line": 33,
+        "method": "retrieveOrderDetails",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli-advanced",
+        "notes": "Strict regex validation ^ORD-[0-9]{6}$ prevents any injection"
+      },
+      {
+        "file": "CategoryBrowser.java",
+        "line": 41,
+        "method": "loadCategoryProducts",
+        "rule": "formatted-sql-string",
+        "expected": "FP",
+        "category": "sqli-advanced",
+        "notes": "Allowlist lookup - only predefined values from ALLOWED_CATEGORIES reach query"
+      },
+      {
+        "file": "InventorySearchService.java",
+        "line": 44,
+        "method": "buildSearchQuery",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli-advanced",
+        "notes": "sortField is NOT sanitized - ORDER BY injection possible"
+      },
+      {
+        "file": "ReportGenerator.java",
+        "line": 32,
+        "method": "fetchReportData",
+        "rule": "formatted-sql-string",
+        "expected": "TP",
+        "category": "sqli-advanced",
+        "notes": "filterClause built from unsanitized input concatenated into PreparedStatement SQL"
+      }
+    ]
+  },
+  "python": {
+    "total": 14,
+    "tp": 9,
+    "fp": 5,
+    "cases": [
+      {
+        "file": "api/users.py",
+        "function": "search_users",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "api/users.py",
+        "function": "find_user",
+        "expected": "FP",
+        "category": "sqli"
+      },
+      {
+        "file": "api/users.py",
+        "function": "user_profile",
+        "expected": "TP",
+        "category": "xss"
+      },
+      {
+        "file": "api/users.py",
+        "function": "user_card",
+        "expected": "FP",
+        "category": "xss"
+      },
+      {
+        "file": "api/files.py",
+        "function": "download_file",
+        "expected": "TP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "api/files.py",
+        "function": "get_file",
+        "expected": "FP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "api/files.py",
+        "function": "convert_file",
+        "expected": "TP",
+        "category": "cmdi"
+      },
+      {
+        "file": "api/files.py",
+        "function": "resize_file",
+        "expected": "FP",
+        "category": "cmdi"
+      },
+      {
+        "file": "db/queries.py",
+        "function": "search_records",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "db/queries.py",
+        "function": "build_query",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "auth/tokens.py",
+        "function": "generate_token_weak",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "auth/tokens.py",
+        "function": "hash_password_weak",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "utils/network.py",
+        "function": "fetch_url",
+        "expected": "TP",
+        "category": "ssrf"
+      },
+      {
+        "file": "utils/network.py",
+        "function": "check_port",
+        "expected": "TP",
+        "category": "ssrf"
+      }
+    ]
+  },
+  "javascript": {
+    "total": 12,
+    "tp": 6,
+    "fp": 6,
+    "cases": [
+      {
+        "file": "routes/users.js",
+        "function": "search",
+        "expected": "TP",
+        "category": "sqli"
+      },
+      {
+        "file": "routes/users.js",
+        "function": "find",
+        "expected": "FP",
+        "category": "sqli"
+      },
+      {
+        "file": "routes/users.js",
+        "function": "profile",
+        "expected": "TP",
+        "category": "xss"
+      },
+      {
+        "file": "routes/users.js",
+        "function": "card",
+        "expected": "FP",
+        "category": "xss"
+      },
+      {
+        "file": "routes/files.js",
+        "function": "download",
+        "expected": "TP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "routes/files.js",
+        "function": "get",
+        "expected": "FP",
+        "category": "path-traversal"
+      },
+      {
+        "file": "routes/files.js",
+        "function": "convert",
+        "expected": "TP",
+        "category": "cmdi"
+      },
+      {
+        "file": "routes/files.js",
+        "function": "resize",
+        "expected": "FP",
+        "category": "cmdi"
+      },
+      {
+        "file": "services/crypto.js",
+        "function": "encrypt",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "services/crypto.js",
+        "function": "hashPassword",
+        "expected": "TP",
+        "category": "crypto"
+      },
+      {
+        "file": "services/fetch.js",
+        "function": "fetchRemote",
+        "expected": "TP",
+        "category": "ssrf"
+      },
+      {
+        "file": "services/fetch.js",
+        "function": "fetchInternal",
+        "expected": "FP",
+        "category": "ssrf"
+      }
+    ]
+  }
+}

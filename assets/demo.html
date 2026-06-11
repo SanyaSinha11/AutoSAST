@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoSAST - AI-Powered Security Analysis</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #faf8f3;
+            color: #1a1614;
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .terminal {
+            width: 720px;
+            max-width: 100%;
+            background: #fffcf7;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(26, 22, 20, 0.08),
+                        0 8px 24px rgba(26, 22, 20, 0.04);
+        }
+
+        .header {
+            background: linear-gradient(180deg, #e8dfd0 0%, #ddd2bf 100%);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(26, 22, 20, 0.12);
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dot:hover {
+            transform: scale(1.15);
+        }
+
+        .red {
+            background: linear-gradient(135deg, #ff6b5e, #ff4b3e);
+            box-shadow: 0 4px 12px rgba(255, 75, 62, 0.25);
+        }
+
+        .yellow {
+            background: linear-gradient(135deg, #ffbd2e, #ffa500);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.25);
+        }
+
+        .green {
+            background: linear-gradient(135deg, #32d583, #27c973);
+            box-shadow: 0 4px 12px rgba(39, 201, 115, 0.25);
+        }
+
+        .title {
+            flex: 1;
+            text-align: center;
+            color: #6b625a;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .content {
+            padding: 28px;
+            min-height: 380px;
+            background: #fffcf7;
+        }
+
+        .line {
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .prompt {
+            color: #ff6b3d;
+            font-weight: 600;
+        }
+
+        .cmd {
+            color: #1a1614;
+            font-weight: 500;
+        }
+
+        .muted {
+            color: #8b817a;
+        }
+
+        .success {
+            color: #2a7d4f;
+            font-weight: 600;
+        }
+
+        .warning {
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .error {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .info {
+            color: #ff6b3d;
+            font-weight: 600;
+        }
+
+        .finding {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: #f8f4ed;
+            border-radius: 100px;
+            margin: 10px 0;
+            border: 2px solid;
+            opacity: 0;
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .finding:hover {
+            transform: translateX(6px);
+            box-shadow: 0 16px 48px rgba(255, 107, 61, 0.15);
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            from {
+                transform: translateX(-20px);
+            }
+        }
+
+        .finding.tp {
+            border-color: #dc2626;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.06), rgba(220, 38, 38, 0.02));
+        }
+
+        .finding.fp {
+            border-color: #2a7d4f;
+            background: linear-gradient(135deg, rgba(42, 125, 79, 0.06), rgba(42, 125, 79, 0.02));
+        }
+
+        .badge {
+            font-size: 10.5px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-weight: 700;
+            margin-right: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+
+        .badge.tp {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(220, 38, 38, 0.08));
+            color: #dc2626;
+            border: 1.5px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .badge.fp {
+            background: linear-gradient(135deg, rgba(42, 125, 79, 0.12), rgba(42, 125, 79, 0.08));
+            color: #2a7d4f;
+            border: 1.5px solid rgba(42, 125, 79, 0.2);
+        }
+
+        .finding-text {
+            flex: 1;
+            font-size: 13px;
+            color: #1a1614;
+            font-weight: 500;
+        }
+
+        .finding-file {
+            color: #8b817a;
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+
+        .loader {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff6b3d;
+            font-weight: 600;
+        }
+
+        .loader-icon {
+            font-size: 18px;
+            animation: pulse 1.3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.12);
+            }
+        }
+
+        .summary {
+            margin-top: 24px;
+            padding: 24px 26px;
+            background: linear-gradient(135deg, rgba(255, 107, 61, 0.08), rgba(255, 140, 61, 0.04));
+            border-radius: 28px;
+            border: 2px solid rgba(255, 107, 61, 0.15);
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+            box-shadow: 0 24px 64px rgba(255, 107, 61, 0.12);
+        }
+
+        .summary-title {
+            color: #ff6b3d;
+            font-weight: 700;
+            margin-bottom: 16px;
+            font-size: 13.5px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 32px;
+            font-size: 13px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            color: #1a1614;
+        }
+
+        .stat-label {
+            color: #6b625a;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="terminal">
+        <div class="header">
+            <div class="dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="title">autosast — security-scan</div>
+        </div>
+        <div class="content" id="content"></div>
+    </div>
+
+    <script>
+        const content = document.getElementById('content');
+        let delay = 0;
+
+        function addLine(html, extraDelay = 400) {
+            delay += extraDelay;
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'line';
+                div.innerHTML = html;
+                content.appendChild(div);
+            }, delay);
+        }
+
+        function addFinding(type, text, file, extraDelay = 300) {
+            delay += extraDelay;
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = `finding ${type}`;
+                div.innerHTML = `
+                    <span class="badge ${type}">${type === 'tp' ? '🔴 Critical' : '✓ Safe'}</span>
+                    <span class="finding-text">${text} <span class="finding-file">${file}</span></span>
+                `;
+                content.appendChild(div);
+            }, delay);
+        }
+
+        function addSummary() {
+            delay += 500;
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'summary';
+                div.innerHTML = `
+                    <div class="summary-title">🛡️ Security Analysis Complete</div>
+                    <div class="summary-stats">
+                        <div class="stat"><span class="stat-value success">2</span><span class="stat-label">Critical Issues</span></div>
+                        <div class="stat"><span class="stat-value error">3</span><span class="stat-label">False Positives</span></div>
+                        <div class="stat"><span class="stat-value info">60%</span><span class="stat-label">Reduction</span></div>
+                    </div>
+                `;
+                content.appendChild(div);
+            }, delay);
+        }
+
+        // Run the demo
+        addLine('<span class="prompt">❯</span> <span class="cmd">autosast scan ./src</span>', 500);
+        addLine('<span class="muted">🔍 Running Semgrep security scan...</span>', 800);
+        addLine('<span class="warning">⚠️  Found 5 potential security vulnerabilities</span>', 1000);
+        addLine('<span class="loader"><span class="loader-icon">⚡</span> AI agent analyzing with LLM...</span>', 600);
+
+        delay += 2000; // Pause for "thinking"
+
+        addLine('<span class="muted">🔬 Tracing data flows and sanitization patterns...</span>', 100);
+
+        delay += 1500;
+
+        addLine('<span class="success">✓ Triage complete:</span>', 100);
+
+        addFinding('tp', 'SQL Injection — Unsanitized user input', 'AccountHandler.java:32');
+        addFinding('fp', 'SQL Injection — Parameterized query detected', 'SecureReport.java:37');
+        addFinding('fp', 'SQL Injection — Constant propagation safe', 'SecureReport.java:54');
+        addFinding('tp', 'XSS — Direct response write without encoding', 'AdminController.java:30');
+        addFinding('fp', 'Weak Crypto — Dead code path unreachable', 'HashUtil.java:14');
+
+        addSummary();
+    </script>
+</body>
+
+</html>

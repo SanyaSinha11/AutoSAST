@@ -1,0 +1,81 @@
+{
+  "description": "Ground truth for AutoSAST Java validation testing - includes cross-file test cases",
+  "created": "2026-01-07",
+  "total_true_positives": 7,
+  "total_false_positives": 2,
+  "findings": [
+    {
+      "file": "controller/UserController.java",
+      "method": "searchUsers",
+      "line_hint": 26,
+      "expected": "TRUE_POSITIVE",
+      "category": "sql-injection",
+      "reason": "Direct string concatenation with user input in SQL query"
+    },
+    {
+      "file": "controller/UserController.java",
+      "method": "displayUserProfile",
+      "line_hint": 36,
+      "expected": "TRUE_POSITIVE",
+      "category": "xss",
+      "reason": "Direct output of user input without HTML encoding"
+    },
+    {
+      "file": "controller/UserController.java",
+      "method": "runSystemCommand",
+      "line_hint": 43,
+      "expected": "TRUE_POSITIVE",
+      "category": "command-injection",
+      "reason": "User input directly in Runtime.exec shell command"
+    },
+    {
+      "file": "controller/FileController.java",
+      "method": "downloadFile",
+      "line_hint": 17,
+      "expected": "TRUE_POSITIVE",
+      "category": "path-traversal",
+      "reason": "No path validation allows directory traversal"
+    },
+    {
+      "file": "service/CryptoService.java",
+      "method": "hashPassword",
+      "line_hint": 14,
+      "expected": "TRUE_POSITIVE",
+      "category": "weak-crypto",
+      "reason": "MD5 is cryptographically broken for password hashing"
+    },
+    {
+      "file": "crossfile/repository/ProductRepository.java",
+      "method": "findBySearchTermAndCategory",
+      "line_hint": 28,
+      "expected": "TRUE_POSITIVE",
+      "category": "sql-injection",
+      "reason": "CROSS-FILE: User input from ProductController flows through ProductService unsanitized"
+    },
+    {
+      "file": "crossfile/repository/OrderRepository.java",
+      "method": "findByIdAndCustomer",
+      "line_hint": 32,
+      "expected": "FALSE_POSITIVE",
+      "category": "sql-injection",
+      "reason": "CROSS-FILE: Input is sanitized in OrderController via InputSanitizer.sanitizeForSql() before reaching here"
+    },
+    {
+      "file": "crossfile/service/EncryptionService.java",
+      "method": "encrypt",
+      "line_hint": 38,
+      "expected": "TRUE_POSITIVE",
+      "category": "crypto-iv-reuse",
+      "reason": "CROSS-FILE: Uses CryptoConfig.STATIC_IV which is a constant - IV never changes"
+    },
+    {
+      "file": "crossfile/service/SecureEncryptionService.java",
+      "method": "encrypt",
+      "line_hint": 45,
+      "expected": "FALSE_POSITIVE",
+      "category": "crypto-iv-reuse",
+      "reason": "CROSS-FILE: Uses SecureIVGenerator which creates fresh random IV for each encryption"
+    }
+  ]
+}
+
