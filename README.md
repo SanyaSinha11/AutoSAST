@@ -280,18 +280,6 @@ AutoSAST's LLM agent has access to powerful code analysis tools:
 
 ---
 
-## 🗺️ Roadmap
-
-- [x] Java, Python, JS/TS support
-- [x] Inter-procedural data flow
-- [x] GPT-4o & Gemini support
-- [ ] CI/CD integration (GitHub Actions, GitLab CI)
-- [ ] IDE extensions (VS Code, IntelliJ)
-- [ ] Custom rule support
-- [ ] Auto-fix suggestions
-
----
-
 ## 📜 License
 
 MIT License — See [LICENSE](LICENSE) for details.
