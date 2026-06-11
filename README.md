@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Semgrep-Powered-orange?style=for-the-badge" alt="Semgrep">
-  <img src="https://img.shields.io/badge/LLM-GPT--4o%20|%20Gemini-purple?style=for-the-badge" alt="LLM">
+  <img src="https://img.shields.io/badge/LLM-GPT--4o%20|%20Gemini%20|%20Ollama%20|%20Groq-purple?style=for-the-badge" alt="LLM">
 </p>
 
 <h1 align="center">
@@ -62,8 +62,10 @@ The result? **60%+ false positive reduction** with **100% accuracy** on verified
 pip install -r requirements.txt
 
 # Configure (choose your LLM provider)
-export OPENAI_API_KEY=sk-...
-# or export GEMINI_API_KEY=...
+export OPENAI_API_KEY=sk-...           # For OpenAI (GPT-4o)
+# OR export GEMINI_API_KEY=...        # For Google Gemini
+# OR export GROQ_API_KEY=...          # For Groq (fast inference)
+# OR export PROVIDER=ollama            # For local Ollama (free, private)
 
 # Run
 python -m src.cli scan /path/to/your/code
@@ -142,37 +144,81 @@ Full analysis support for:
 ### 🧠 Agentic Reasoning
 Not a simple classifier. An **actual agent** that:
 - Uses tools iteratively to gather evidence
-- Follows caller chains to entry points  
+- Follows caller chains to entry points
 - Understands framework conventions
 - Provides detailed reasoning for each verdict
+
+### 🤖 Multi-LLM Support
+Works with **any LLM provider** - choose based on your needs:
+- **OpenAI** (GPT-4o) - Most tested, highest accuracy
+- **Google Gemini** - Fast and cost-effective
+- **Groq** - Ultra-fast inference for open models
+- **Ollama** - **100% local, free, private** - no API costs!
+- **Azure OpenAI** - Enterprise compliance and data privacy
+
+### 🔗 Git Repository Support (NEW!)
+Scan **any public Git repository** directly:
+- **Auto-clone** from GitHub, GitLab, Bitbucket, or self-hosted Git
+- **Automatic cleanup** - temporary files deleted after scan
+- **Branch/tag/commit support** - scan any version
+- No manual cloning needed!
 
 ---
 
 ## 🛠️ CLI Commands
 
+### Scan Local Codebase
 ```bash
-# Scan a local codebase
 python -m src.cli scan /path/to/project
-
-# Scan a GitHub/GitLab repository (auto-clones and cleans up)
-python -m src.cli scan https://github.com/user/repository
-python -m src.cli scan https://github.com/user/repo --branch develop
-
-# Scan with custom output path
-python -m src.cli scan . -o my-custom-report.json
-
-# Scan with detailed per-finding analysis
-python -m src.cli scan . --detailed-output
-
-# View previous results
-python -m src.cli view results/scan_project_20260611_143022.json
-
-# Inspect context extraction for a specific finding
-python -m src.cli context src/Handler.java 42
+python -m src.cli scan . --config auto --limit 10
 ```
 
-**Note:** Results are automatically saved to the `results/` folder with naming convention:
-`scan_<target>_<timestamp>.json` (e.g., `scan_myproject_20260611_143022.json`)
+### Scan Git Repository (NEW! 🎉)
+AutoSAST can now scan remote repositories directly - no manual cloning needed!
+
+```bash
+# GitHub
+python -m src.cli scan https://github.com/user/repository
+
+# Specific branch
+python -m src.cli scan https://github.com/user/repo --branch develop
+
+# Specific tag or commit
+python -m src.cli scan https://github.com/user/repo --tag v1.0.0
+python -m src.cli scan https://github.com/user/repo --commit abc123
+
+# GitLab / Bitbucket / Self-hosted
+python -m src.cli scan https://gitlab.com/user/project
+python -m src.cli scan https://bitbucket.org/user/repo
+```
+
+**Features:**
+- ✅ Automatically clones to temporary directory
+- ✅ Runs full security analysis
+- ✅ Deletes temporary files after scan completes
+- ✅ Works with GitHub, GitLab, Bitbucket, and any Git hosting
+- ⚠️ Public repositories only (private repos require manual clone)
+
+### Other Commands
+```bash
+# Custom output path
+python -m src.cli scan . -o my-custom-report.json
+
+# Detailed per-finding analysis
+python -m src.cli scan . --detailed-output
+
+# Filter by severity
+python -m src.cli scan . --severity high critical
+
+# View previous results interactively
+python -m src.cli view results/scan_project_20260611_143022.json
+
+# Debug context extraction
+python -m src.cli context src/Handler.java 42 --rule sql-injection
+```
+
+**Note:** Results are automatically saved to `results/` folder with naming convention:
+`scan_<target>_<timestamp>.json`
 
 ---
 
@@ -182,10 +228,28 @@ Configure via environment variables or `.env` file:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PROVIDER` | LLM Provider (`openai`, `azure`, `gemini`) | `openai` |
-| `MODEL` | Model name (e.g., `gpt-4o`, `gemini-1.5-pro`) | `gpt-4o` |
-| `OPENAI_API_KEY` | API key for OpenAI | — |
-| `GEMINI_API_KEY` | API key for Google Gemini | — |
+| `PROVIDER` | LLM Provider: `openai`, `azure`, `gemini`, `groq`, `ollama` | `openai` |
+| `MODEL` | Model name (e.g., `gpt-4o`, `gemini-1.5-pro`, `qwen2.5:14b`) | `gpt-4o` |
+| `OPENAI_API_KEY` | API key for OpenAI (required if PROVIDER=openai) | — |
+| `AZURE_OPENAI_API_KEY` | API key for Azure OpenAI (required if PROVIDER=azure) | — |
+| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint URL (required if PROVIDER=azure) | — |
+| `GEMINI_API_KEY` | API key for Google Gemini (required if PROVIDER=gemini) | — |
+| `GROQ_API_KEY` | API key for Groq (required if PROVIDER=groq) | — |
+| `OLLAMA_BASE_URL` | Ollama server URL (optional if PROVIDER=ollama) | `http://localhost:11434` |
+
+### 💡 LLM Provider Options
+
+**Commercial (Cloud-based):**
+- **OpenAI** - GPT-4o, GPT-4 (most tested, recommended)
+- **Azure OpenAI** - Enterprise OpenAI deployment
+- **Google Gemini** - Gemini 1.5 Pro, Gemini Pro
+- **Groq** - Fast inference for open models (Mixtral, Llama)
+
+**Local (Free & Private):**
+- **Ollama** - Run models locally (no API costs, full privacy)
+  - Install: https://ollama.ai
+  - Recommended models: `qwen2.5:14b`, `llama3.1:8b`, `codellama:13b`
+  - Usage: `export PROVIDER=ollama && export MODEL=qwen2.5:14b`
 
 ---
 
@@ -202,19 +266,6 @@ AutoSAST's LLM agent has access to powerful code analysis tools:
 | `search_codebase` | Find patterns, security utilities, or similar code |
 | `get_imports` | Understand available libraries and frameworks |
 | `map_arguments` | Track data flow between caller and callee |
-
----
-
-## 📊 Benchmarks
-
-Tested on internal ground truth testbed:
-
-| Metric | Value |
-|--------|-------|
-| **Accuracy** | 100% (15/15 correct classifications) |
-| **False Positive Reduction** | 60%+ |
-| **Avg. Tool Calls per Finding** | 3.4 |
-| **Cross-File Refs Resolved** | 36 |
 
 ---
 
