@@ -424,6 +424,8 @@ def cmd_scan(args):
                 title="[bold green]✅ Clean[/]",
                 border_style="green",
             ))
+            console.print("\n[yellow]ℹ️  No report generated - 0 findings detected[/]")
+            console.print("[dim]   (Reports are only created when vulnerabilities are found)[/]")
             return
 
         # Stage 2: Context Extraction & Analysis
