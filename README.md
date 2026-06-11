@@ -5,7 +5,11 @@
 </p>
 
 <h1 align="center">
+<<<<<<< HEAD
   <img src="assets/logo.png" alt="AutoSAST Logo" width="50" style="vertical-align: middle;">
+=======
+  <img src="assets/logo.png" alt="AutoSAST Logo" width="42" style="vertical-align: text-bottom; margin-right: 8px;">
+>>>>>>> 54a032e (Update)
   AutoSAST
 </h1>
 
