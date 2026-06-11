@@ -173,7 +173,7 @@ python -m src.cli scan /path/to/project
 python -m src.cli scan . --config auto --limit 10
 ```
 
-### Scan Git Repository (NEW! 🎉)
+### Scan Git Repository 
 AutoSAST can now scan remote repositories directly - no manual cloning needed!
 
 ```bash
