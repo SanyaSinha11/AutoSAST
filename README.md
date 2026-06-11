@@ -5,11 +5,7 @@
 </p>
 
 <h1 align="center">
-<<<<<<< HEAD
-  <img src="assets/logo.png" alt="AutoSAST Logo" width="50" style="vertical-align: middle;">
-=======
-  <img src="assets/logo.png" alt="AutoSAST Logo" width="42" style="vertical-align: text-bottom; margin-right: 8px;">
->>>>>>> 54a032e (Update)
+  <img src="assets/logo.png" alt="AutoSAST Logo" width="48" style="vertical-align: middle; margin-right: 10px;">
   AutoSAST
 </h1>
 
@@ -22,7 +18,8 @@
 </p>
 
 <p align="center">
-  <a href="USER_GUIDE.md">📚 Complete User Guide</a>
+  <a href="USER_GUIDE.md">📚 Complete User Guide</a> •
+  <a href="GIT_REPOSITORY_SUPPORT.md">🔗 Git Repository Guide</a>
 </p>
 
 ---
