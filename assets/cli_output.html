@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoSAST - CLI Output Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e27;
+            font-family: 'Courier New', 'Consolas', monospace;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .terminal {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1a1e3a;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: linear-gradient(135deg, #2a2e4a, #1e2238);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #00d9ff33;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            color: #00d9ff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .banner {
+            color: #00d9ff;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            white-space: pre;
+            font-family: monospace;
+        }
+
+        .config-panel {
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .config-title {
+            color: #00d9ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .config-row {
+            margin: 5px 0;
+        }
+
+        .config-key {
+            color: #00d9ff;
+            display: inline-block;
+            width: 200px;
+        }
+
+        .config-value {
+            color: #ffffff;
+        }
+
+        .stage-panel {
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .stage-title {
+            color: #00d9ff;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .stage-desc {
+            color: #58a6ff;
+            font-style: italic;
+        }
+
+        .scan-progress {
+            color: #00d9ff;
+            margin: 10px 0;
+        }
+
+        .findings-header {
+            color: #ffffff;
+            font-weight: bold;
+            margin: 20px 0 10px;
+        }
+
+        .finding-box {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+
+        .finding-box.safe {
+            border-color: #00ff00;
+            background: #00ff0010;
+        }
+
+        .finding-box.vulnerable {
+            border-color: #ff0000;
+            background: #ff000010;
+        }
+
+        .finding-box.review {
+            border-color: #ffff00;
+            background: #ffff0010;
+        }
+
+        .finding-num {
+            color: #00d9ff;
+            font-weight: bold;
+        }
+
+        .verdict {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .verdict.safe { color: #00ff00; }
+        .verdict.vulnerable { color: #ff0000; }
+        .verdict.review { color: #ffff00; }
+
+        .confidence {
+            margin-left: 10px;
+        }
+
+        .confidence.high { color: #00ff00; }
+        .confidence.medium { color: #ffff00; }
+        .confidence.low { color: #ff0000; }
+
+        .tools { color: #58a6ff; }
+        .rule-id { color: #00d9ff; }
+        .file-path { color: #8b949e; }
+
+        .summary-panel {
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .summary-title {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 8px 0;
+        }
+
+        .summary-label {
+            color: #00d9ff;
+            font-weight: bold;
+        }
+
+        .summary-value {
+            font-weight: bold;
+        }
+
+        .bar {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .metrics-panel {
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .metrics-title {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .metric-row {
+            margin: 8px 0;
+        }
+
+        .metric-label {
+            color: #00d9ff;
+            font-weight: bold;
+            display: inline-block;
+            width: 250px;
+        }
+
+        .metric-value {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .success-text { color: #00ff00; }
+        .dim-text { color: #8b949e; }
+        .yellow-text { color: #ffff00; }
+        .cyan-text { color: #00d9ff; }
+        .magenta-text { color: #ff00ff; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="terminal-dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="terminal-title">autosast — python -m src.cli scan</div>
+        </div>
+        <div class="terminal-body">
+            <!-- Banner -->
+            <div class="banner">
+    ╔══════════════════════════════════════════════════════════╗
+    ║     ░█████╗░██╗░░░██╗████████╗░█████╗░░██████╗░█████╗░░██████╗████████╗   ║
+    ║     ██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██╔════╝╚══██╔══╝   ║
+    ║     ███████║██║░░░██║░░░██║░░░██║░░██║╚█████╗░███████║╚█████╗░░░░██║░░░   ║
+    ║     ██╔══██║██║░░░██║░░░██║░░░██║░░██║░╚═══██╗██╔══██║░╚═══██╗░░░██║░░░   ║
+    ║     ██║░░██║╚██████╔╝░░░██║░░░╚█████╔╝██████╔╝██║░░██║██████╔╝░░░██║░░░   ║
+    ║     ╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░░╚════╝░╚═════╝░╚═╝░░╚═╝╚═════╝░░░░╚═╝░░░   ║
+    ║                                                                              ║
+    ║           <span class="yellow-text">🤖 AI-Powered Security Analysis & Triage 🛡️</span>                        ║
+    ║                <span class="cyan-text">Intelligent False Positive Reduction</span>                          ║
+    ╚══════════════════════════════════════════════════════════╝
+            </div>
+
+            <!-- Configuration Panel -->
+            <div class="config-panel">
+                <div class="config-title">⚙️  Configuration</div>
+                <div class="config-row">
+                    <span class="config-key">📁 Target</span>
+                    <span class="config-value">/path/to/your/project</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-key">📋 Semgrep Config</span>
+                    <span class="config-value yellow-text">p/security-audit</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-key">🤖 LLM Provider</span>
+                    <span class="config-value"><span class="success-text">OPENAI</span> <span class="dim-text">→</span> <span class="cyan-text">gpt-4o</span></span>
+                </div>
+                <div class="config-row">
+                    <span class="config-key">🔧 Tool Calling</span>
+                    <span class="config-value success-text">✓ Enabled</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-key">🔄 Iterative Context</span>
+                    <span class="config-value success-text">✓ Enabled</span> <span class="dim-text">(max 3 iterations)</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-key">💾 Output File</span>
+                    <span class="config-value">results/scan_project_20260612_143022.json</span> <span class="dim-text">(auto-generated)</span>
+                </div>
+            </div>
+
+            <!-- Stage 1: Scanning -->
+            <div class="stage-panel">
+                <div class="stage-title">🔍 Code Scanning</div>
+                <div class="stage-desc">Stage 1/3: Running Semgrep static analysis</div>
+                <div class="stage-desc dim-text">Analyzing code patterns and security rules...</div>
+            </div>
+            <div class="scan-progress">
+  <span class="success-text">✓</span> Found <span class="cyan-text">15</span> findings <span class="dim-text">in 6.2s</span>
+            </div>
+
+            <!-- Stage 2: AI Analysis -->
+            <div class="stage-panel" style="border-color: #ff00ff;">
+                <div class="stage-title magenta-text">🧠 AI Analysis</div>
+                <div class="stage-desc">Stage 2/3: AI-powered vulnerability analysis</div>
+                <div class="stage-desc dim-text">• Extracting code context and data flows</div>
+                <div class="stage-desc dim-text">• Analyzing with <span class="cyan-text">gpt-4o</span></div>
+                <div class="stage-desc dim-text">• Checking sanitization patterns</div>
+            </div>
+
+            <!-- Findings Analysis -->
+            <div class="findings-header">Findings Analysis:</div>
+
+            <!-- Finding 1 - Vulnerable -->
+            <div class="finding-box vulnerable">
+                <div><span class="finding-num">#1</span><span class="dim-text">/15</span>  <span class="verdict vulnerable">🔴 VULNERABLE</span>  <span class="confidence high">95%</span>  <span class="tools">🔧 3 tools</span></div>
+                <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
+                <div class="file-path">📄 src/main/java/com/app/AccountHandler.java:32</div>
+            </div>
+
+            <!-- Finding 2 - Safe -->
+            <div class="finding-box safe">
+                <div><span class="finding-num">#2</span><span class="dim-text">/15</span>  <span class="verdict safe">✅ SAFE</span>  <span class="confidence high">92%</span>  <span class="tools">🔧 2 tools</span></div>
+                <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
+                <div class="file-path">📄 src/main/java/com/app/SecureReportHandler.java:37</div>
+            </div>
+
+            <!-- Finding 3 - Safe -->
+            <div class="finding-box safe">
+                <div><span class="finding-num">#3</span><span class="dim-text">/15</span>  <span class="verdict safe">✅ SAFE</span>  <span class="confidence high">88%</span>  <span class="tools">🔧 4 tools</span></div>
+                <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
+                <div class="file-path">📄 src/main/java/com/app/SecureReportHandler.java:54</div>
+            </div>
+
+            <!-- Finding 4 - Vulnerable -->
+            <div class="finding-box vulnerable">
+                <div><span class="finding-num">#4</span><span class="dim-text">/15</span>  <span class="verdict vulnerable">🔴 VULNERABLE</span>  <span class="confidence high">98%</span>  <span class="tools">🔧 2 tools</span></div>
+                <div class="rule-id">📋 javascript.express.security.audit.xss</div>
+                <div class="file-path">📄 src/controllers/AdminController.js:30</div>
+            </div>
+
+            <!-- Finding 5 - Needs Review -->
+            <div class="finding-box review">
+                <div><span class="finding-num">#5</span><span class="dim-text">/15</span>  <span class="verdict review">⚠️  NEEDS REVIEW</span>  <span class="confidence medium">72%</span>  <span class="tools">🔧 3 tools</span></div>
+                <div class="rule-id">📋 python.flask.security.audit.path-traversal</div>
+                <div class="file-path">📄 src/api/FileHandler.py:45</div>
+            </div>
+
+            <!-- Summary Panel -->
+            <div class="summary-panel">
+                <div class="summary-title">🎯 Analysis Complete <span style="color: #ff0000;">● 2 Vulnerable</span></div>
+                <div class="dim-text" style="text-align: center; margin-bottom: 15px;">Total: 15 findings analyzed</div>
+
+                <div class="summary-row">
+                    <span class="summary-label" style="color: #ff0000;">🔴 Vulnerable</span>
+                    <span><span class="summary-value" style="color: #ff0000;">2</span> <span class="bar" style="color: #ff0000;">████████░░░░░░░░░░░░</span></span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" style="color: #00ff00;">✅ Safe</span>
+                    <span><span class="summary-value" style="color: #00ff00;">11</span> <span class="bar" style="color: #00ff00;">███████████████████░</span></span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" style="color: #ffff00;">⚠️  Needs Review</span>
+                    <span><span class="summary-value" style="color: #ffff00;">2</span> <span class="bar" style="color: #ffff00;">███░░░░░░░░░░░░░░░░░</span></span>
+                </div>
+            </div>
+
+            <!-- Metrics Panel -->
+            <div class="metrics-panel">
+                <div class="metrics-title">📊 Performance Metrics</div>
+
+                <div class="metric-row">
+                    <span class="metric-label">🎯 FP Reduction Rate</span>
+                    <span class="metric-value success-text">73.3%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">⚡ Total Time</span>
+                    <span class="metric-value cyan-text">18.7s</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label dim-text">  ├─ Semgrep Scan</span>
+                    <span class="metric-value dim-text">6.2s</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label dim-text">  └─ AI Analysis</span>
+                    <span class="metric-value dim-text">12.5s</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">🎫 Tokens Used</span>
+                    <span class="metric-value magenta-text">15,432</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">🔧 Tool Calls</span>
+                    <span class="metric-value cyan-text">42</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">🔄 Context Expansions</span>
+                    <span class="metric-value yellow-text">8</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label dim-text">  └─ Total Iterations</span>
+                    <span class="metric-value dim-text">18</span>
+                </div>
+            </div>
+
+            <!-- Results Saved -->
+            <div style="margin-top: 20px;">
+                <span class="success-text">✅ Results saved to:</span> <span class="config-value">results/scan_project_20260612_143022.json</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
