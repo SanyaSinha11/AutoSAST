@@ -59,26 +59,6 @@ The result? **60%+ false positive reduction** with **100% accuracy** on verified
 
 ---
 
-## ⚡ Quick Start
-
-```bash
-# Install
-pip install -r requirements.txt
-
-# Configure (choose your LLM provider)
-export OPENAI_API_KEY=sk-...           # For OpenAI (GPT-4o)
-# OR export GEMINI_API_KEY=...        # For Google Gemini
-# OR export GROQ_API_KEY=...          # For Groq (fast inference)
-# OR export PROVIDER=ollama            # For local Ollama (free, private)
-
-# Run
-python -m src.cli scan /path/to/your/code
-```
-
-That's it. **No complex setup. No training. No configuration files.**
-
----
-
 ## 🎯 Real Results
 
 From an actual scan on a Java codebase:
@@ -135,6 +115,26 @@ The agent **iteratively investigates** each finding:
 - 📊 **60%+ False Positive Reduction** - Focus on what actually matters
 
 > **📚 [Read the Complete User Guide](USER_GUIDE.md)** for detailed usage scenarios, best practices, and troubleshooting.
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Install
+pip install -r requirements.txt
+
+# Configure (choose your LLM provider)
+export OPENAI_API_KEY=sk-...           # For OpenAI (GPT-4o)
+# OR export GEMINI_API_KEY=...        # For Google Gemini
+# OR export GROQ_API_KEY=...          # For Groq (fast inference)
+# OR export PROVIDER=ollama            # For local Ollama (free, private)
+
+# Run
+python -m src.cli scan /path/to/your/code
+```
+
+That's it. **No complex setup. No training. No configuration files.**
 
 ---
 
@@ -215,14 +215,6 @@ Configure via environment variables or `.env` file:
 | 😵 Alert fatigue → missed vulnerabilities | 🎯 Focus on what matters |
 | 📝 "I'll check it later" → never | ✅ Immediate, confident verdicts |
 | 🧠 Tribal knowledge required | 📖 AI reasoning is documented |
-
----
-
-## 📚 Documentation
-
-- **[Complete User Guide](USER_GUIDE.md)** - Installation, configuration, usage scenarios, best practices
-- **[Git Repository Support](GIT_REPOSITORY_SUPPORT.md)** - Scan remote repositories, advanced options
-- **[Agent Tools Reference](USER_GUIDE.md#advanced-features)** - 11 specialized code analysis tools
 
 ---
 
