@@ -92,22 +92,90 @@ def setup_logging(level: str = "INFO", log_file: Optional[str] = None, quiet: bo
 
 
 def print_banner():
-    """Print the AutoSAST banner using Rich."""
-    banner_text = Text()
-    banner_text.append("\n  🛡️  ", style="bold bright_cyan")
-    banner_text.append("AutoSAST", style="bold bright_white")
-    banner_text.append(" - AI-Powered Security Triage", style="bold bright_cyan")
-    banner_text.append("\n      ", style="")
-    banner_text.append("Intelligent False Positive Reduction", style="italic bright_blue")
-    banner_text.append("\n", style="")
+    """Print the enhanced AutoSAST banner."""
+    from rich.align import Align
+    from rich.text import Text
+    from rich.panel import Panel
 
+    # Create stylized banner text
+    banner_lines = []
+
+    # Title with ASCII styling
+    title = Text()
+    title.append("    ", style="")
+    title.append("╔══════════════════════════════════════════════════════════╗", style="bold bright_cyan")
+    banner_lines.append(title)
+
+    line1 = Text()
+    line1.append("    ", style="")
+    line1.append("║  ", style="bold bright_cyan")
+    line1.append("   ░█████╗░██╗░░░██╗████████╗░█████╗░░██████╗░█████╗░░██████╗████████╗", style="bold bright_white")
+    line1.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line1)
+
+    line2 = Text()
+    line2.append("    ", style="")
+    line2.append("║  ", style="bold bright_cyan")
+    line2.append("   ██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██╔════╝██╔══██╗██╔════╝╚══██╔══╝", style="bold bright_white")
+    line2.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line2)
+
+    line3 = Text()
+    line3.append("    ", style="")
+    line3.append("║  ", style="bold bright_cyan")
+    line3.append("   ███████║██║░░░██║░░░██║░░░██║░░██║╚█████╗░███████║╚█████╗░░░░██║░░░", style="bold bright_green")
+    line3.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line3)
+
+    line4 = Text()
+    line4.append("    ", style="")
+    line4.append("║  ", style="bold bright_cyan")
+    line4.append("   ██╔══██║██║░░░██║░░░██║░░░██║░░██║░╚═══██╗██╔══██║░╚═══██╗░░░██║░░░", style="bold bright_green")
+    line4.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line4)
+
+    line5 = Text()
+    line5.append("    ", style="")
+    line5.append("║  ", style="bold bright_cyan")
+    line5.append("   ██║░░██║╚██████╔╝░░░██║░░░╚█████╔╝██████╔╝██║░░██║██████╔╝░░░██║░░░", style="bold bright_magenta")
+    line5.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line5)
+
+    line6 = Text()
+    line6.append("    ", style="")
+    line6.append("║  ", style="bold bright_cyan")
+    line6.append("   ╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░░╚════╝░╚═════╝░╚═╝░░╚═╝╚═════╝░░░░╚═╝░░░", style="bold bright_magenta")
+    line6.append("   ║", style="bold bright_cyan")
+    banner_lines.append(line6)
+
+    empty = Text()
+    empty.append("    ", style="")
+    empty.append("║                                                                              ║", style="bold bright_cyan")
+    banner_lines.append(empty)
+
+    subtitle = Text()
+    subtitle.append("    ", style="")
+    subtitle.append("║         ", style="bold bright_cyan")
+    subtitle.append("🤖 AI-Powered Security Analysis & Triage", style="bold bright_yellow")
+    subtitle.append(" 🛡️                ║", style="bold bright_cyan")
+    banner_lines.append(subtitle)
+
+    desc = Text()
+    desc.append("    ", style="")
+    desc.append("║              ", style="bold bright_cyan")
+    desc.append("Intelligent False Positive Reduction", style="italic bright_blue")
+    desc.append("                    ║", style="bold bright_cyan")
+    banner_lines.append(desc)
+
+    bottom = Text()
+    bottom.append("    ", style="")
+    bottom.append("╚══════════════════════════════════════════════════════════╝", style="bold bright_cyan")
+    banner_lines.append(bottom)
+
+    # Print banner
     console.print()
-    console.print(Panel(
-        banner_text,
-        box=DOUBLE,
-        border_style="bright_cyan",
-        padding=(0, 2),
-    ))
+    for line in banner_lines:
+        console.print(line)
     console.print()
 
 
