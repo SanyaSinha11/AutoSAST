@@ -65,6 +65,67 @@
             color: #c9d1d9;
             line-height: 1.6;
             font-size: 14px;
+            min-height: 600px;
+        }
+
+        /* Animation classes */
+        .hidden {
+            opacity: 0;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prompt-line {
+            margin-bottom: 10px;
+        }
+
+        .prompt {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .command {
+            color: #ffffff;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00d9ff;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
         }
 
         .banner {
@@ -265,8 +326,78 @@
             </div>
             <div class="terminal-title">autosast — python -m src.cli scan</div>
         </div>
-        <div class="terminal-body">
-            <!-- Banner -->
+        <div class="terminal-body" id="terminal-content">
+            <!-- Content will be dynamically added by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const terminalContent = document.getElementById('terminal-content');
+        let delay = 0;
+
+        // Helper function to add delay
+        function wait(ms) {
+            delay += ms;
+            return delay;
+        }
+
+        // Typing effect for command
+        function typeCommand(text, speed = 80) {
+            const promptLine = document.createElement('div');
+            promptLine.className = 'prompt-line hidden';
+            promptLine.innerHTML = '<span class="prompt">❯</span> <span class="command" id="typing-text"></span><span class="cursor"></span>';
+            terminalContent.appendChild(promptLine);
+
+            setTimeout(() => {
+                promptLine.classList.remove('hidden');
+                promptLine.classList.add('fade-in');
+
+                const typingText = document.getElementById('typing-text');
+                let i = 0;
+
+                const typeInterval = setInterval(() => {
+                    if (i < text.length) {
+                        typingText.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typeInterval);
+                        // Remove cursor after typing
+                        const cursor = promptLine.querySelector('.cursor');
+                        if (cursor) cursor.remove();
+                    }
+                }, speed);
+            }, delay);
+
+            delay += text.length * speed + 500;
+        }
+
+        // Add element with animation
+        function addElement(html, animClass = 'slide-in', delayMs = 400) {
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'hidden';
+                div.innerHTML = html;
+                terminalContent.appendChild(div);
+
+                setTimeout(() => {
+                    div.classList.remove('hidden');
+                    div.classList.add(animClass);
+                }, 50);
+            }, delay);
+
+            delay += delayMs;
+        }
+
+        // Start the animation sequence
+        wait(500);
+
+        // Type the command
+        typeCommand('python -m src.cli scan /Users/demo/vulnerable-app', 60);
+
+        wait(800);
+
+        // Show banner
+        addElement(`
             <div class="banner">
     ╔═════════════════════════════════════════════════════════════════════════════╗
     ║     ░█████╗░██╗░░░██╗████████╗░█████╗░░██████╗░█████╗░░██████╗████████╗     ║
@@ -281,12 +412,11 @@
     ╚═════════════════════════════════════════════════════════════════════════════╝
             </div>
 
-            <!-- Configuration Panel -->
             <div class="config-panel">
                 <div class="config-title">⚙️  Configuration</div>
                 <div class="config-row">
                     <span class="config-key">📁 Target</span>
-                    <span class="config-value">/path/to/your/project</span>
+                    <span class="config-value">/Users/demo/vulnerable-app</span>
                 </div>
                 <div class="config-row">
                     <span class="config-key">📋 Semgrep Config</span>
@@ -294,7 +424,7 @@
                 </div>
                 <div class="config-row">
                     <span class="config-key">🤖 LLM Provider</span>
-                    <span class="config-value"><span class="success-text">Ollama</span> <span class="dim-text">→</span> <span class="cyan-text">tinyllama</span></span>
+                    <span class="config-value"><span class="success-text">OPENAI</span> <span class="dim-text">→</span> <span class="cyan-text">gpt-4o</span></span>
                 </div>
                 <div class="config-row">
                     <span class="config-key">🔧 Tool Calling</span>
@@ -306,68 +436,92 @@
                 </div>
                 <div class="config-row">
                     <span class="config-key">💾 Output File</span>
-                    <span class="config-value">results/scan_project_20260612_143022.json</span> <span class="dim-text">(auto-generated)</span>
+                    <span class="config-value">results/scan_vulnerable-app_20260612_143022.json</span> <span class="dim-text">(auto-generated)</span>
                 </div>
             </div>
+        `, 'fade-in', 600);
 
-            <!-- Stage 1: Scanning -->
+        // Stage 1: Scanning
+        wait(400);
+        addElement(`
             <div class="stage-panel">
                 <div class="stage-title">🔍 Code Scanning</div>
                 <div class="stage-desc">Stage 1/3: Running Semgrep static analysis</div>
                 <div class="stage-desc dim-text">Analyzing code patterns and security rules...</div>
             </div>
-            <div class="scan-progress">
-  <span class="success-text">✓</span> Found <span class="cyan-text">15</span> findings <span class="dim-text">in 6.2s</span>
-            </div>
+        `, 'slide-in', 500);
 
-            <!-- Stage 2: AI Analysis -->
+        wait(800);
+        addElement(`
+            <div class="scan-progress">
+                <span class="success-text">✓</span> Found <span class="cyan-text">15</span> findings <span class="dim-text">in 6.2s</span>
+            </div>
+        `, 'fade-in', 500);
+
+        // Stage 2: AI Analysis
+        wait(600);
+        addElement(`
             <div class="stage-panel" style="border-color: #ff00ff;">
                 <div class="stage-title magenta-text">🧠 AI Analysis</div>
                 <div class="stage-desc">Stage 2/3: AI-powered vulnerability analysis</div>
                 <div class="stage-desc dim-text">• Extracting code context and data flows</div>
-                <div class="stage-desc dim-text">• Analyzing with <span class="cyan-text">tinyllama</span></div>
+                <div class="stage-desc dim-text">• Analyzing with <span class="cyan-text">gpt-4o</span></div>
                 <div class="stage-desc dim-text">• Checking sanitization patterns</div>
             </div>
+        `, 'slide-in', 500);
 
-            <!-- Findings Analysis -->
-            <div class="findings-header">Findings Analysis:</div>
+        wait(400);
+        addElement('<div class="findings-header">Findings Analysis:</div>', 'fade-in', 300);
 
-            <!-- Finding 1 - Vulnerable -->
+        // Individual findings appear one by one
+        wait(300);
+        addElement(`
             <div class="finding-box vulnerable">
                 <div><span class="finding-num">#1</span><span class="dim-text">/15</span>  <span class="verdict vulnerable">🔴 VULNERABLE</span>  <span class="confidence high">95%</span>  <span class="tools">🔧 3 tools</span></div>
                 <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
                 <div class="file-path">📄 src/main/java/com/app/AccountHandler.java:32</div>
             </div>
+        `, 'slide-in', 400);
 
-            <!-- Finding 2 - Safe -->
+        wait(300);
+        addElement(`
             <div class="finding-box safe">
                 <div><span class="finding-num">#2</span><span class="dim-text">/15</span>  <span class="verdict safe">✅ SAFE</span>  <span class="confidence high">92%</span>  <span class="tools">🔧 2 tools</span></div>
                 <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
                 <div class="file-path">📄 src/main/java/com/app/SecureReportHandler.java:37</div>
             </div>
+        `, 'slide-in', 400);
 
-            <!-- Finding 3 - Safe -->
+        wait(300);
+        addElement(`
             <div class="finding-box safe">
                 <div><span class="finding-num">#3</span><span class="dim-text">/15</span>  <span class="verdict safe">✅ SAFE</span>  <span class="confidence high">88%</span>  <span class="tools">🔧 4 tools</span></div>
                 <div class="rule-id">📋 java.lang.security.audit.sqli.tainted-sql-string</div>
                 <div class="file-path">📄 src/main/java/com/app/SecureReportHandler.java:54</div>
             </div>
+        `, 'slide-in', 400);
 
-            <!-- Finding 4 - Vulnerable -->
+        wait(300);
+        addElement(`
             <div class="finding-box vulnerable">
                 <div><span class="finding-num">#4</span><span class="dim-text">/15</span>  <span class="verdict vulnerable">🔴 VULNERABLE</span>  <span class="confidence high">98%</span>  <span class="tools">🔧 2 tools</span></div>
                 <div class="rule-id">📋 javascript.express.security.audit.xss</div>
                 <div class="file-path">📄 src/controllers/AdminController.js:30</div>
             </div>
+        `, 'slide-in', 400);
 
-            <!-- Finding 5 - Needs Review -->
+        wait(300);
+        addElement(`
             <div class="finding-box review">
                 <div><span class="finding-num">#5</span><span class="dim-text">/15</span>  <span class="verdict review">⚠️  NEEDS REVIEW</span>  <span class="confidence medium">72%</span>  <span class="tools">🔧 3 tools</span></div>
                 <div class="rule-id">📋 python.flask.security.audit.path-traversal</div>
                 <div class="file-path">📄 src/api/FileHandler.py:45</div>
             </div>
+        `, 'slide-in', 400);
 
-            <!-- Summary Panel -->
+        // Stage 3: Results
+        wait(600);
+        addElement(`
             <div class="summary-panel">
                 <div class="summary-title">🎯 Analysis Complete <span style="color: #ff0000;">● 2 Vulnerable</span></div>
                 <div class="dim-text" style="text-align: center; margin-bottom: 15px;">Total: 15 findings analyzed</div>
@@ -385,8 +539,11 @@
                     <span><span class="summary-value" style="color: #ffff00;">2</span> <span class="bar" style="color: #ffff00;">███░░░░░░░░░░░░░░░░░</span></span>
                 </div>
             </div>
+        `, 'slide-in', 500);
 
-            <!-- Metrics Panel -->
+        // Metrics Panel
+        wait(400);
+        addElement(`
             <div class="metrics-panel">
                 <div class="metrics-title">📊 Performance Metrics</div>
 
@@ -423,12 +580,15 @@
                     <span class="metric-value dim-text">18</span>
                 </div>
             </div>
+        `, 'slide-in', 500);
 
-            <!-- Results Saved -->
+        // Final message
+        wait(400);
+        addElement(`
             <div style="margin-top: 20px;">
-                <span class="success-text">✅ Results saved to:</span> <span class="config-value">results/scan_project_20260612_143022.json</span>
+                <span class="success-text">✅ Results saved to:</span> <span class="config-value">results/scan_vulnerable-app_20260612_143022.json</span>
             </div>
-        </div>
-    </div>
+        `, 'fade-in', 300);
+    </script>
 </body>
 </html>
