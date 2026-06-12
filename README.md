@@ -82,7 +82,7 @@ From an actual scan on a Java codebase:
 ## How It Works
 
 <p align="center">
-  <img src="assets/demo.gif" alt="AutoSAST Demo" width="600">
+  <img src="assets/cli_output.gif" alt="AutoSAST Demo" width="600">
 </p>
 
 ```
