@@ -17,8 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="USER_GUIDE.md">📚 Complete User Guide</a> •
-  <a href="GIT_REPOSITORY_SUPPORT.md">🔗 Git Repository Guide</a>
+  <a href="USER_GUIDE.md">📚 Complete User Guide</a>
 </p>
 
 ---
@@ -155,7 +154,6 @@ python -m src.cli scan https://gitlab.com/user/project --tag v1.0.0
 ```
 
 Auto-clones, scans, and cleans up automatically. Works with GitHub, GitLab, Bitbucket, and any Git hosting.
-**📖 [Git Repository Guide](GIT_REPOSITORY_SUPPORT.md)** for advanced options and private repo workarounds.
 
 ### Other Commands
 ```bash
